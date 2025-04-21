@@ -103,7 +103,7 @@ Future<void> saveBillPdf(Bill bill) async {
   );
 
   // Save to local file system
-  final outputDir = await getExternalStorageDirectory(); // For Android
+  final outputDir = await getExternalStorageDirectory(); 
   final filePath = "${outputDir!.path}/Bill_${bill.id}.pdf";
   final file = File(filePath);
 
