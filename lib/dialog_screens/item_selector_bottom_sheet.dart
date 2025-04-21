@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:khata_book_assignment/models/bills.dart';
 import 'package:khata_book_assignment/models/items.dart';
 import 'package:khata_book_assignment/providers/items_provider.dart';
 
 import '../models/billItems.dart';
 
 class ItemSelectorBottomSheet extends ConsumerStatefulWidget {
-  const ItemSelectorBottomSheet({super.key});
+  final BillType billType;
+  const ItemSelectorBottomSheet({super.key, required this.billType});
 
   @override
   ConsumerState<ItemSelectorBottomSheet> createState() =>
@@ -134,8 +136,10 @@ class _ItemSelectorBottomSheetState
                             IconButton(
                               icon: const Icon(Icons.add_circle_outline),
                               onPressed: () {
-                                if (((selectedQuantities[item.id] ?? 0) <
-                                    item.quantity)) {
+                                final billType = widget.billType;
+                                if (billType == BillType.purchase ||
+                                    ((selectedQuantities[item.id] ?? 0) <
+                                        item.quantity)) {
                                   _increase(item.id!);
                                 }
                               },

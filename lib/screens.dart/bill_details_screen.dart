@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:khata_book_assignment/screens.dart/bill_pdf_preview_screen.dart';
 
 import '../models/bills.dart';
 
@@ -58,7 +59,6 @@ class BillDetailsScreen extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                           
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,7 +71,6 @@ class BillDetailsScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
-                           
                             const SizedBox(width: 8),
                             Text(
                               '₹${(item.amount).toStringAsFixed(2)}',
@@ -99,6 +98,23 @@ class BillDetailsScreen extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BillPdfPreviewScreen(bill: bill),
+                ),
+              );
+            },
+            child: const Text('VIEW PDF'),
+          ),
         ),
       ),
     );

@@ -182,7 +182,7 @@ class DataBaseHelper {
   }
 
   //bill CRUD
-  Future<void> insertBill(Bill bill) async {
+  Future<void> insertBill(Bill bill, TransactionMode mode) async {
     final db = await instance.database;
 
     final billId = await db.insert(billsTable, bill.toMap());
@@ -195,7 +195,7 @@ class DataBaseHelper {
 
     final txn = TransactionModel(
       amount: bill.totalAmount,
-      mode: TransactionMode.cash,
+      mode: mode,
       description: '${bill.billType} FROM ${bill.name}',
       dateTime: bill.dateTime,
       type: bill.billType == BillType.sale ? 'credit' : 'debit',

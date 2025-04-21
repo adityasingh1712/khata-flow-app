@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:khata_book_assignment/models/bills.dart';
 import 'package:khata_book_assignment/dialog_screens/item_selector_bottom_sheet.dart';
+import 'package:khata_book_assignment/models/transaction.dart';
 import 'package:khata_book_assignment/providers/bills_provider.dart';
 import 'package:khata_book_assignment/providers/transaction_provider.dart';
 import 'package:khata_book_assignment/utils/database_helper.dart';
@@ -21,6 +22,7 @@ class _AddBillScreenState extends ConsumerState<AddBillScreen> {
   final TextEditingController nameController = TextEditingController();
   BillType _billType = BillType.purchase;
   DateTime _selectedDate = DateTime.now();
+  TransactionMode mode = TransactionMode.cash;
   List<BillItem> selectedItems = [];
 
   double get totalAmount =>
@@ -30,7 +32,7 @@ class _AddBillScreenState extends ConsumerState<AddBillScreen> {
     final result = await showModalBottomSheet<List<BillItem>>(
       context: context,
       isScrollControlled: true,
-      builder: (_) => const ItemSelectorBottomSheet(),
+      builder: (_) => ItemSelectorBottomSheet(billType: _billType),
     );
 
     if (result != null) {
@@ -46,6 +48,12 @@ class _AddBillScreenState extends ConsumerState<AddBillScreen> {
     if (name.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please enter a bill name")),
+      );
+      return;
+    }
+    if (selectedItems.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please select atleast one item")),
       );
       return;
     }
@@ -78,7 +86,7 @@ class _AddBillScreenState extends ConsumerState<AddBillScreen> {
       }
     }
 
-    await db.insertBill(newBill);
+    await db.insertBill(newBill, mode);
     ref.invalidate(billProvider);
     ref.invalidate(transactionsProvider);
     ref.invalidate(todayTransactionsProvider);
@@ -141,6 +149,38 @@ class _AddBillScreenState extends ConsumerState<AddBillScreen> {
                     },
                     child: const Text('Pick Date'),
                   )
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Payement Mode:'),
+                  ToggleButtons(
+                    borderRadius: BorderRadius.circular(10),
+                    selectedColor: Colors.white,
+                    fillColor: Colors.teal,
+                    isSelected: [
+                      mode == TransactionMode.cash,
+                      mode == TransactionMode.online,
+                    ],
+                    onPressed: (index) {
+                      setState(() {
+                        mode = index == 1
+                            ? TransactionMode.online
+                            : TransactionMode.cash;
+                      });
+                    },
+                    children: const [
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('Cash'),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('Online'),
+                      )
+                    ],
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
